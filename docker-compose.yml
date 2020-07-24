@@ -1,0 +1,47 @@
+version: '3.7'
+networks:
+  web:
+    driver: bridge
+  internal:
+    driver: bridge
+
+services:
+  api:
+    container_name: api
+    build:
+      context: ./api
+    tty: true
+    restart: always
+    volumes:
+      - "./api:/app"
+    networks:
+      - internal
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - internal
+
+  nginx:
+    container_name: nginx
+    image: "nginx:stable"
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - web
+      - internal
+
+    env_file:
+      - .env
+    links:
+      - adminer
