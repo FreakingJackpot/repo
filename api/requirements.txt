@@ -6,3 +6,5 @@ pytest
 marshmallow
 aiohttp
 requests
+schedule
+pytz
