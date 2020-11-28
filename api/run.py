@@ -35,6 +35,12 @@ async def convert(request):
     after = request.args['after'][0]
     value = request.args['value'][0]
     value = float(value)
+    if not(db.curr_exist(before) and db.curr_exist(after)):
+        return json({
+            "currency_before": before,
+            "currency_after": after,
+            "result": 'ERROR'
+        })
     if before != 'RUB' and after != 'RUB':
         course1 = db.get_currency(before)
         course2 = db.get_currency(after)
