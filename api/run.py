@@ -29,8 +29,11 @@ async def test(request, currency):
     })
 
 
-@app.get("/convert/<before>/<after>/<value>")
-async def convert(request, before, after, value):
+@app.post("/course/")
+async def convert(request):
+    before = request.args['before'][0]
+    after = request.args['after'][0]
+    value = request.args['value'][0]
     value = float(value)
     if before != 'RUB' and after != 'RUB':
         course1 = db.get_currency(before)
@@ -49,17 +52,6 @@ async def convert(request, before, after, value):
         "currency_after": after,
         "result": round(result, 2)
     })
-
-
-@app.post('/convert')
-async def post_handler(request):
-    course = await db.get_currency(request.args['from_currency'][0],
-                                   request.args['to_currency'][0])
-    print(course)
-
-    return json({"currency": request.args['to_currency'][0],
-                 "rub_course": float(request.args['amount'][0]) * course
-                 })
 
 
 if __name__ == "__main__":
