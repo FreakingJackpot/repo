@@ -13,7 +13,6 @@ async def update_db():
         schedule.run_pending()
         time.sleep(1)
 
-
 app = Sanic()
 Update_bd = Process(target=update_db)
 Update_bd.start()

@@ -8,3 +8,4 @@ aiohttp
 requests
 schedule
 pytz
+sqlalchemy

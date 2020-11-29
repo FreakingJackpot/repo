@@ -40,6 +40,7 @@ def create_curr(name, value):
 
 def reset_currency():
     date = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow'))
+    date = date - datetime.timedelta(days=1)
     url = "https://www.cbr-xml-daily.ru/daily_json.js"
     request = requests.get(url)
     request = request.json()
