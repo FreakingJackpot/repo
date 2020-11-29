@@ -1,7 +1,7 @@
-import requests
-import sqlite3
 import datetime
+import sqlite3
 import pytz
+import requests
 
 
 class db:
@@ -13,6 +13,7 @@ class db:
 
     def Add(self):
         date = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow'))
+        date = date - datetime.timedelta(days=1)
         url = "https://www.cbr-xml-daily.ru/daily_json.js"
         request = requests.get(url)
         request = request.json()

@@ -32,14 +32,14 @@ async def test(request, currency):
 @app.get("/convert/<before>/<after>/<value>")
 async def convert(request, before, after, value):
     value = float(value)
-    if (before != 'RUB' and after != 'RUB'):
+    if before != 'RUB' and after != 'RUB':
         course1 = await get_course(before)
         course2 = await get_course(after)
         result = value * (course1 / course2)
-    elif (before == 'RUB'):
+    elif before == 'RUB':
         course = await get_course(after)
         result = value / course
-    elif (after == 'RUB'):
+    elif after == 'RUB':
         course = await get_course(before)
         result = value * course
     return json({
