@@ -39,16 +39,16 @@ def create_curr(name, value):
 
 
 def reset_currency():
-    date = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow'))
-    date = date - datetime.timedelta(days=1)
     url = "https://www.cbr-xml-daily.ru/daily_json.js"
     request = requests.get(url)
     request = request.json()
-    tmp = '-'.join([str(date.year), str(date.month), str(date.day)])
-    if request["Date"].find(tmp) > -1:
-        key = 'Value'
-    elif request["PreviousDate"].find(tmp) > -1:
-        key = 'Previous'
+    date = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow'))
+    if date.weekday() == 0:
+        key = __Data_check(date,request,days=2)
+    elif date.weekday() == 6:
+        key = __Data_check(date, request,days=1)
+    else:
+        key = __Data_check(date, request)
     rates = request["Valute"]
     for i in rates.keys():
         print(rates[i][key])
@@ -61,3 +61,13 @@ def get_currency(name):
 
 def curr_exist(name):
     return session.query(exists().where(Currency.name == name)).scalar()
+
+#Проверяет поля запроса на совпадение с датой
+def __Data_check(date,request,days=0):
+    date = date - datetime.timedelta(days=days)
+    tmp = '-'.join([str(date.year), str(date.month), str(date.day)])
+    if request["Date"].find(tmp) > -1:
+        key = 'Value'
+    elif request["PreviousDate"].find(tmp) > -1:
+        key = 'Previous'
+    return key
