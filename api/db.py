@@ -65,7 +65,7 @@ def curr_exist(name):
 #Проверяет поля запроса на совпадение с датой
 def __Data_check(date,request,days=0):
     date = date - datetime.timedelta(days=days)
-    tmp = '-'.join([str(date.year), str(date.month), str(date.day)])
+    tmp=date.strftime("%Y-%m-%d")
     if request["Date"].find(tmp) > -1:
         key = 'Value'
     elif request["PreviousDate"].find(tmp) > -1:
