@@ -1,10 +1,11 @@
-import os
-import schedule
-import db
 import time
 from multiprocessing import Process
+
+import schedule
 from sanic import Sanic
-from sanic.response import json, text
+from sanic.response import json
+
+import db
 
 
 async def update_db():
@@ -13,7 +14,9 @@ async def update_db():
         schedule.run_pending()
         time.sleep(1)
 
+
 app = Sanic()
+db.reset_currency()
 Update_bd = Process(target=update_db)
 Update_bd.start()
 
@@ -34,7 +37,7 @@ async def convert(request):
     after = request.args['after'][0]
     value = request.args['value'][0]
     value = float(value)
-    if not(db.curr_exist(before) and db.curr_exist(after)):
+    if (before != "RUB" and not db.curr_exist(before)) or (after != "RUB" and not db.curr_exist(after)) or value<=0:
         return json({
             "currency_before": before,
             "currency_after": after,
@@ -44,18 +47,18 @@ async def convert(request):
         course1 = db.get_currency(before)
         course2 = db.get_currency(after)
         result = value * (course1 / course2)
-    elif before == 'RUB':
+    elif before == 'RUB' and after != 'RUB':
         course = db.get_currency(after)
         result = value / course
-    elif after == 'RUB':
+    elif after == 'RUB' and before != 'RUB':
         course = db.get_currency(before)
         result = value * course
     else:
-        result = 1
+        result = value
     return json({
         "currency_before": before,
         "currency_after": after,
-        "result": round(result, 2)
+        "result": round(result, 4)
     })
 
 
