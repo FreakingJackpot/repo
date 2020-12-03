@@ -1,8 +1,9 @@
 import os
-import schedule
-import db
 import time
 from multiprocessing import Process
+
+import db
+import schedule
 from sanic import Sanic
 from sanic.response import json, text
 
@@ -29,35 +30,35 @@ async def test(request, currency):
     })
 
 
-@app.get("/convert/<before>/<after>/<value>")
-async def convert(request, before, after, value):
+@app.post("/course/")
+async def convert(request):
+    before = request.args['before'][0]
+    after = request.args['after'][0]
+    value = request.args['value'][0]
     value = float(value)
+    if (before != "RUB" and not db.curr_exist(before)) or (after != "RUB" and not db.curr_exist(after)) or value <= 0:
+        return json({
+            "currency_before": before,
+            "currency_after": after,
+            "result": 'ERROR'
+        })
     if before != 'RUB' and after != 'RUB':
         course1 = await get_course(before)
         course2 = await get_course(after)
         result = value * (course1 / course2)
-    elif before == 'RUB':
+    elif before == 'RUB' and after != 'RUB':
         course = await get_course(after)
         result = value / course
-    elif after == 'RUB':
+    elif after == 'RUB' and before != 'RUB':
         course = await get_course(before)
         result = value * course
+    else:
+        result = value
     return json({
         "currency_before": before,
         "currency_after": after,
-        "result": round(result, 2)
+        "result": round(result, 4)
     })
-
-
-@app.post('/convert')
-async def post_handler(request):
-    course = await get_course(request.args['from_currency'][0],
-                              request.args['to_currency'][0])
-    print(course)
-
-    return json({"currency": request.args['to_currency'][0],
-                 "rub_course": float(request.args['amount'][0]) * course
-                 })
 
 
 async def get_course(convert_from):

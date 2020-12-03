@@ -19,11 +19,11 @@ class db:
         request = request.json()
         date = datetime.datetime.now(tz=pytz.timezone('Europe/Moscow'))
         if date.weekday() == 0:
-            key = self.__Data_check(date, request, 2)
+            key = self.__data_check(date, request, 2)
         elif date.weekday() == 6:
-            key = self.__Data_check(date, request, 1)
+            key = self.__data_check(date, request, 1)
         else:
-            key = self.__Data_check(date, request)
+            key = self.__data_check(date, request)
         rates = request['Valute']
         for i in rates.keys():
             try:
@@ -39,9 +39,11 @@ class db:
     def Get(self, currency):
         self.cursor.execute("SELECT value FROM Currencies WHERE name=?", (currency,))
         return self.cursor.fetchone()[0]
-
+    def curr_exist(self,currency):
+        self.cursor.execute("SELECT value FROM Currencies WHERE name=?", (currency,))
+        return self.cursor.fetchone()
     # Проверяет поля запроса на совпадение с датой
-    def __Data_check(self, date, request, days=0):
+    def __data_check(self, date, request, days=0):
         date = date - datetime.timedelta(days=days)
         tmp = date.strftime("%Y-%m-%d")
         if request["Date"].find(tmp) > -1:
