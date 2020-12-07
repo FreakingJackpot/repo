@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
 
-engine = create_engine('sqlite:///currency.db', echo=True)
+engine = create_engine('sqlite:///currency.db', echo=False)
 Base = declarative_base()
 
 
@@ -28,7 +28,6 @@ session = Session()
 
 
 def create_curr(name, value):
-    print(curr_exist(name))
     if curr_exist(name):
         newCur = session.query(Currency).filter(Currency.name == name).first()
         newCur.value = value
@@ -51,7 +50,6 @@ def reset_currency():
         key = __data_check(date, request)
     rates = request["Valute"]
     for i in rates.keys():
-        print(rates[i][key])
         create_curr(i, rates[i][key])
 
 

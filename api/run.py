@@ -1,14 +1,12 @@
 import time
-from multiprocessing import Process
-
 import schedule
+from multiprocessing import Process
 from sanic import Sanic
 from sanic.response import json
-
 import db
 
 
-async def update_db():
+def update_db():
     schedule.every().day.at("21:00").do(db.reset_currency)
     while True:
         schedule.run_pending()
